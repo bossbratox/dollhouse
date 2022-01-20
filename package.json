@@ -3,6 +3,8 @@
     "@nomiclabs/hardhat-waffle": "^2.0.2",
     "@openzeppelin/contracts": "^4.4.2",
     "chai": "^4.3.4",
-    "hardhat": "^2.8.3"
+    "hardhat": "^2.8.3",
+    "hardhat-gas-reporter": "^1.0.7",
+    "solidity-coverage": "^0.7.18"
   }
 }
