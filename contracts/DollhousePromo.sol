@@ -25,7 +25,6 @@ import "@openzeppelin/contracts/interfaces/IERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 
-import "@openzeppelin/contracts/utils/cryptography/MerkleProof.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
@@ -45,20 +44,13 @@ contract DollhousePromo is ERC721, IERC2981, Ownable, ReentrancyGuard {
     uint256 public maxDolls;
 
     uint256 public constant PUBLIC_SALE_PRICE = 0.01 ether;
-    bool public isPublicSaleActive;
-
+    
     uint256 public maxGiftedDolls;
     uint256 public numGiftedDolls;
-    bytes32 public claimListMerkleRoot;
-
+    
     mapping(address => bool) public claimed;
 
     // ============ ACCESS CONTROL/SANITY MODIFIERS ============
-
-    modifier publicSaleActive() {
-        require(isPublicSaleActive, "Public sale is not open");
-        _;
-    }
 
     modifier maxDollsPerWallet(uint256 numberOfTokens) {
         require(
@@ -97,18 +89,6 @@ contract DollhousePromo is ERC721, IERC2981, Ownable, ReentrancyGuard {
         _;
     }
 
-    modifier isValidMerkleProof(bytes32[] calldata merkleProof, bytes32 root) {
-        require(
-            MerkleProof.verify(
-                merkleProof,
-                root,
-                keccak256(abi.encodePacked(msg.sender))
-            ),
-            "Address does not exist in list"
-        );
-        _;
-    }
-
     constructor(
         address _openSeaProxyRegistryAddress,
         uint256 _maxDolls,
@@ -118,36 +98,6 @@ contract DollhousePromo is ERC721, IERC2981, Ownable, ReentrancyGuard {
         maxDolls = _maxDolls;
         maxGiftedDolls = _maxGiftedDolls;
     }
-
-    // ============ PUBLIC FUNCTIONS FOR MINTING ============
-
-    function mint(uint256 numberOfTokens)
-        external
-        payable
-        nonReentrant
-        isCorrectPayment(PUBLIC_SALE_PRICE, numberOfTokens)
-        publicSaleActive
-        canMintDolls(numberOfTokens)
-        maxDollsPerWallet(numberOfTokens)
-    {
-        for (uint256 i = 0; i < numberOfTokens; i++) {
-            _safeMint(msg.sender, nextTokenId());
-        }
-    }
-
-    function claim(bytes32[] calldata merkleProof)
-        external
-        isValidMerkleProof(merkleProof, claimListMerkleRoot)
-        canGiftDolls(1)
-    {
-        require(!claimed[msg.sender], "Doll already claimed by this wallet");
-
-        claimed[msg.sender] = true;
-        numGiftedDolls += 1;
-
-        _safeMint(msg.sender, nextTokenId());
-    }
-
 
     // ============ PUBLIC READ-ONLY FUNCTIONS ============
 
@@ -179,17 +129,6 @@ contract DollhousePromo is ERC721, IERC2981, Ownable, ReentrancyGuard {
         onlyOwner
     {
         verificationHash = _verificationHash;
-    }
-
-    function setIsPublicSaleActive(bool _isPublicSaleActive)
-        external
-        onlyOwner
-    {
-        isPublicSaleActive = _isPublicSaleActive;
-    }
-
-    function setClaimListMerkleRoot(bytes32 merkleRoot) external onlyOwner {
-        claimListMerkleRoot = merkleRoot;
     }
 
     function reserveForGifting(uint256 numToReserve)

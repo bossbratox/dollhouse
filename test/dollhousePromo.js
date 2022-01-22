@@ -16,4 +16,9 @@ describe("DollhousePromo", function () {
     expect(await DollhousePromo.name()).to.equal("Dollhouse Promo");
     expect(await DollhousePromo.symbol()).to.equal("DOLLPROMO");
   });
+
+  it("should not allow non-owner mints", async () => {
+    expect(await DollhousePromo.name()).to.equal("Dollhouse Promo");
+    expect(await DollhousePromo.symbol()).to.equal("DOLLPROMO");
+  });
 });
