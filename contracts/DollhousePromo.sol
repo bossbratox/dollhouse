@@ -36,29 +36,14 @@ contract DollhousePromo is ERC721, IERC2981, Ownable, ReentrancyGuard {
     Counters.Counter private tokenCounter;
 
     string private baseURI;
-    string public verificationHash;
-    address private openSeaProxyRegistryAddress;
-    bool private isOpenSeaProxyActive = true;
 
-    uint256 public constant MAX_DOLLS_PER_WALLET = 5;
-    uint256 public maxDolls;
-
-    uint256 public constant PUBLIC_SALE_PRICE = 0.01 ether;
-    
+    uint256 public maxDolls;    
     uint256 public maxGiftedDolls;
     uint256 public numGiftedDolls;
     
     mapping(address => bool) public claimed;
 
     // ============ ACCESS CONTROL/SANITY MODIFIERS ============
-
-    modifier maxDollsPerWallet(uint256 numberOfTokens) {
-        require(
-            balanceOf(msg.sender) + numberOfTokens <= MAX_DOLLS_PER_WALLET,
-            "Max dolls to mint is five"
-        );
-        _;
-    }
 
     modifier canMintDolls(uint256 numberOfTokens) {
         require(
@@ -90,11 +75,9 @@ contract DollhousePromo is ERC721, IERC2981, Ownable, ReentrancyGuard {
     }
 
     constructor(
-        address _openSeaProxyRegistryAddress,
         uint256 _maxDolls,
         uint256 _maxGiftedDolls
     ) ERC721("Dollhouse Promo", "DOLLPROMO") {
-        openSeaProxyRegistryAddress = _openSeaProxyRegistryAddress;
         maxDolls = _maxDolls;
         maxGiftedDolls = _maxGiftedDolls;
     }
@@ -113,22 +96,6 @@ contract DollhousePromo is ERC721, IERC2981, Ownable, ReentrancyGuard {
 
     function setBaseURI(string memory _baseURI) external onlyOwner {
         baseURI = _baseURI;
-    }
-
-    // function to disable gasless listings for security in case
-    // opensea ever shuts down or is compromised
-    function setIsOpenSeaProxyActive(bool _isOpenSeaProxyActive)
-        external
-        onlyOwner
-    {
-        isOpenSeaProxyActive = _isOpenSeaProxyActive;
-    }
-
-    function setVerificationHash(string memory _verificationHash)
-        external
-        onlyOwner
-    {
-        verificationHash = _verificationHash;
     }
 
     function reserveForGifting(uint256 numToReserve)
@@ -187,30 +154,6 @@ contract DollhousePromo is ERC721, IERC2981, Ownable, ReentrancyGuard {
         return
             interfaceId == type(IERC2981).interfaceId ||
             super.supportsInterface(interfaceId);
-    }
-
-    /**
-     * @dev Override isApprovedForAll to allowlist user's OpenSea proxy accounts to enable gas-less listings.
-     */
-    function isApprovedForAll(address owner, address operator)
-        public
-        view
-        override
-        returns (bool)
-    {
-        // Get a reference to OpenSea's proxy registry contract by instantiating
-        // the contract using the already existing address.
-        ProxyRegistry proxyRegistry = ProxyRegistry(
-            openSeaProxyRegistryAddress
-        );
-        if (
-            isOpenSeaProxyActive &&
-            address(proxyRegistry.proxies(owner)) == operator
-        ) {
-            return true;
-        }
-
-        return super.isApprovedForAll(owner, operator);
     }
 
     /**

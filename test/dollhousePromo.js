@@ -8,7 +8,7 @@ describe("DollhousePromo", function () {
   beforeEach(async () => {
     [owner, stranger] = await ethers.getSigners();
     const DollhousePromoFactory = await ethers.getContractFactory("DollhousePromo");
-    DollhousePromo = await DollhousePromoFactory.deploy(owner.address, 1000, 100);
+    DollhousePromo = await DollhousePromoFactory.deploy(1000, 100);
     await DollhousePromo.deployed();
   });
 
