@@ -37,7 +37,6 @@ contract DollhousePromo is ERC721, IERC2981, Ownable, ReentrancyGuard {
 
     string private baseURI;
 
-    uint256 public maxDolls;    
     uint256 public maxGiftedDolls;
     uint256 public numGiftedDolls;
     
@@ -45,40 +44,17 @@ contract DollhousePromo is ERC721, IERC2981, Ownable, ReentrancyGuard {
 
     // ============ ACCESS CONTROL/SANITY MODIFIERS ============
 
-    modifier canMintDolls(uint256 numberOfTokens) {
-        require(
-            tokenCounter.current() + numberOfTokens <=
-                maxDolls - maxGiftedDolls,
-            "Not enough dolls remaining to mint"
-        );
-        _;
-    }
-
     modifier canGiftDolls(uint256 num) {
         require(
             numGiftedDolls + num <= maxGiftedDolls,
             "Not enough dolls remaining to gift"
         );
-        require(
-            tokenCounter.current() + num <= maxDolls,
-            "Not enough dolls remaining to mint"
-        );
-        _;
-    }
-
-    modifier isCorrectPayment(uint256 price, uint256 numberOfTokens) {
-        require(
-            price * numberOfTokens == msg.value,
-            "Incorrect ETH value sent"
-        );
         _;
     }
 
     constructor(
-        uint256 _maxDolls,
         uint256 _maxGiftedDolls
-    ) ERC721("Dollhouse Promo", "DOLLPROMO") {
-        maxDolls = _maxDolls;
+    ) ERC721("Dollhouse Promo", "DOLLPROMO") {        
         maxGiftedDolls = _maxGiftedDolls;
     }
 
