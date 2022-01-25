@@ -1,0 +1,45 @@
+{
+  "name": "dollhouse #179",
+  "description": "be a doll. mint a doll.",
+  "image": "ipfs://QmZXH4bJKMsDsxMuybSf1rXkXuroqzkkKGSgKKsWtDL44d/179.png",
+  "dna": "4646b797cc5a8315cd0bf1b035de40dd3e2ee981",
+  "edition": 179,
+  "date": 1643073491371,
+  "artist": "bossbratbimbo",
+  "url": "https://doll.house",
+  "attributes": [
+    {
+      "trait_type": "Background",
+      "value": "Underwater"
+    },
+    {
+      "trait_type": "Face",
+      "value": "445"
+    },
+    {
+      "trait_type": "Blush",
+      "value": "Red"
+    },
+    {
+      "trait_type": "Eye Shadow",
+      "value": "Pool_Blue"
+    },
+    {
+      "trait_type": "Eyes",
+      "value": "Grey"
+    },
+    {
+      "trait_type": "Hair",
+      "value": "Long_Aqua"
+    },
+    {
+      "trait_type": "Lipstick",
+      "value": "Ox_Blood"
+    },
+    {
+      "trait_type": "Lashes",
+      "value": "Lashes"
+    }
+  ],
+  "compiler": "HashLips Art Engine"
+}
